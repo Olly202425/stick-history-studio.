@@ -358,7 +358,7 @@ var UNIQUE_STORIES = [
       de: {
         script: "Wusstest du, dass der weltberühmte französische Apfelkuchen Tarte Tatin durch ein Küchen-Missgeschick entstanden ist?! Um achtzehnhundertachtzig bemerkte die Köchin Stéphanie Tatin viel zu spät, dass sie Äpfel in Butter und Zucker schmorte, aber den Teigboden vergessen hatte! Um das Gericht zu retten, legte sie den Teig einfach oben auf die Äpfel und stürzte die Form kopfüber auf einen Teller! Welche Geschichte willst du im nächsten Video? Schreib es in die Kommentare und aktiviere die Glocke!",
         title: "Der berühmte Kuchen, der KOPFÜBER AUS VERSEHEN entstand?! 🤯🥧 #geschichte #shorts",
-        desc: "Wusstest du, dass die berühmte Tarte Tatin um 1880 durch ein Missgeschick in der Küche entstand?! 🥧🔥 Stéphanie Tatin vergaß den Teigboden unter den Äpfeln, legte ihn einfach oben drauf und stürzte den Kuchen kopfüber auf den Teller!\n\n💬 Welche Geschichte willst du im nächsten Video sehen? Schreib es mir in die Kommentare!\n🔔 Abonniere Stick History und aktiviere die Glocke, um kein neues Video zu verpassen! 👇\n\n#geschichte #kuriositäten #tartetatin #kuchen #essen #erfindungen #shorts"
+        desc: "Wusstest du, dass die berühmte Tarte Tatin um 1880 durch ein Missgeschick in der Küche entstand?! 🥧🔥 Stéphanie Tatin vergaß den Teigboden unter den Äpfeln, legte ihn einfach oben drauf und stürzte den Kuchen kopfüber auf den Teller!\n\n💬 Welche Geschichte willst du im nächsten Video sehen? Schreib es mir in die Kommentare!\n🔔 Abonniere Stick History und aktiviere die Glocke, um keine wahre Geschichte mehr zu verpassen! 👇\n\n#geschichte #kuriositäten #tartetatin #kuchen #essen #erfindungen #shorts"
       }
     }
   },
@@ -736,28 +736,40 @@ function generateLiveGeminiStory() {
   }
   saveAccountKeys(false);
   status.textContent = "🧠 Gemini sta generando una nuova storia con " + getActiveAccount() + "...";
+
   var excluded = UNIQUE_STORIES.map(function(s){return s.name;}).join(", ");
-  var promptText = "Generate a true, viral historical food/drink invention story for YouTube Shorts (32 seconds narration, ~70 words per language). Strictly EXCLUDE: " + excluded + ". " + (topic ? "Focus on: " + topic + ". " : "") + "Return ONLY valid JSON with structure: {\"id\":\"unique_slug\",\"name\":\"Emoji + Name (Year)\",\"year\":\"YYYY\",\"reason\":\"Short Italian explanation\",\"thumbText\":\"2-3 WORDS ENGLISH CAPS?!\",\"prop\":\"raw ingredients\",\"dish\":\"finished dish\",\"scenes\":[\"scene 1\",\"scene 2\",\"scene 3\",\"scene 4\",\"scene 5\",\"scene 6\",\"scene 7 guest heart eyes\",\"scene 8 bell\"],\"langs\":{\"it\":{\"script\":\"70-word Italian script starting with Sapevi che... years in words, ending with Quale storia vuoi nel prossimo video? Scrivimelo nei commenti e attiva la campanella!\",\"title\":\"Italian title\",\"desc\":\"Italian desc with 🔔 and 💬\"},\"en\":{\"script\":\"70-word English script\",\"title\":\"English title\",\"desc\":\"English desc\"},\"es\":{\"script\":\"70-word Spanish script\",\"title\":\"Spanish title\",\"desc\":\"Spanish desc\"},\"pt\":{\"script\":\"70-word Portuguese script\",\"title\":\"Portuguese title\",\"desc\":\"Portuguese desc\"},\"de\":{\"script\":\"70-word German script\",\"title\":\"German title\",\"desc\":\"German desc\"}}}";
+  var promptText = "Generate a true, viral historical food/drink invention story for YouTube Shorts (~50 words per language). Strictly EXCLUDE: " + excluded + ". " + (topic ? "Focus on: " + topic + ". " : "") + "Return ONLY valid JSON: {\"id\":\"unique_slug\",\"name\":\"Emoji + Name (Year)\",\"year\":\"YYYY\",\"reason\":\"Short Italian hook\",\"thumbText\":\"2-3 WORDS CAPS?!\",\"prop\":\"ingredients\",\"dish\":\"finished dish\",\"scenes\":[\"s1\",\"s2\",\"s3\",\"s4\",\"s5\",\"s6\",\"s7 guest heart eyes\",\"s8 bell\"],\"langs\":{\"it\":{\"script\":\"Italian script starting with Sapevi che... years in words, ending with Quale storia vuoi nel prossimo video? Scrivimelo nei commenti e attiva la campanella!\",\"title\":\"Italian title\",\"desc\":\"Italian desc with 🔔 and 💬\"},\"en\":{\"script\":\"English script\",\"title\":\"English title\",\"desc\":\"English desc\"},\"es\":{\"script\":\"Spanish script\",\"title\":\"Spanish title\",\"desc\":\"Spanish desc\"},\"pt\":{\"script\":\"Portuguese script\",\"title\":\"Portuguese title\",\"desc\":\"Portuguese desc\"},\"de\":{\"script\":\"German script\",\"title\":\"German title\",\"desc\":\"German desc\"}}}";
 
   var modelsToTry = ["gemini-3.8-flash", "gemini-3.5-flash-lite"];
 
+  function fetchWithTimeout(url, options, ms) {
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, ms);
+    var opts = Object.assign({}, options, { signal: controller.signal });
+    return fetch(url, opts).finally(function() { clearTimeout(timer); });
+  }
+
   function tryModel(idx) {
     var modelName = modelsToTry[idx];
-    return fetch("https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": key
+    return fetchWithTimeout(
+      "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": key
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: promptText }] }],
+          generationConfig: { responseMimeType: "application/json" }
+        })
       },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: promptText }] }],
-        generationConfig: { responseMimeType: "application/json" }
-      })
-    })
+      25000
+    )
     .then(function(res) {
       if (!res.ok) {
         return res.text().then(function(errBody) {
-          if (res.status === 404 && idx + 1 < modelsToTry.length) {
+          if ((res.status === 404 || res.status === 400) && idx + 1 < modelsToTry.length) {
             return tryModel(idx + 1);
           }
           throw new Error("HTTP " + res.status + " (" + modelName + "): " + errBody.slice(0, 140));
@@ -776,7 +788,11 @@ function generateLiveGeminiStory() {
       status.textContent = "✓ Nuova storia '" + parsed.name + "' creata!";
     })
     .catch(function(err) {
-      status.textContent = "❌ " + (err && err.message ? err.message : "Errore API: controlla la chiave Gemini nella Scheda 4.");
+      if (err && err.name === "AbortError") {
+        status.textContent = "⏱️ Tempo scaduto (25s): riprova o pesca una storia pronta dall'archivio.";
+      } else {
+        status.textContent = "❌ " + (err && err.message ? err.message : "Errore durante la generazione.");
+      }
     });
 }
 
