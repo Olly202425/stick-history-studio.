@@ -23,6 +23,7 @@
   .btn { width: 100%; border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer; text-align: center; display: block; margin-top: 8px; transition: transform 0.1s, opacity 0.15s; }
   .btn:active { opacity: 0.8; transform: scale(0.99); }
   .btn-ai { background: linear-gradient(135deg, #d97706, #b91c1c); color: #ffffff; font-size: 15px; padding: 14px; box-shadow: 0 3px 8px rgba(185,28,28,0.25); }
+  .btn-save { background: #15803d; color: #ffffff; font-size: 15px; padding: 13px; box-shadow: 0 3px 8px rgba(21,128,61,0.25); }
   .btn-flow { background: linear-gradient(135deg, #1d4ed8, #1e3a8a); color: #ffffff; font-size: 15px; padding: 14px; box-shadow: 0 3px 8px rgba(30,58,138,0.25); }
   .btn-copy { background: #1c1917; color: #fef3c7; }
   .btn-copy.copied { background: #15803d; color: #ffffff; }
@@ -46,7 +47,7 @@
   .chip { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; }
   .chip.done { opacity: 0.45; text-decoration: line-through; background: #e7e5e4; border-color: #a8a29e; color: #57534e; }
   .label { font-size: 12px; font-weight: 700; color: #57534e; margin-top: 8px; display: block; }
-  .status-msg { font-size: 12px; margin-top: 8px; font-weight: 700; color: #b45309; }
+  .status-msg { font-size: 12px; margin-top: 8px; font-weight: 700; color: #15803d; }
   .vidiq-pill { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 900; color: #ffffff; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
   .vidiq-green { background: #15803d; box-shadow: 0 2px 5px rgba(21,128,61,0.3); }
   .vidiq-red { background: #dc2626; box-shadow: 0 2px 5px rgba(220,38,38,0.3); }
@@ -55,6 +56,8 @@
   .vidiq-checks { font-size: 11px; margin-top: 6px; font-weight: 700; line-height: 1.4; }
   .vidiq-checks.ok { color: #166534; }
   .vidiq-checks.bad { color: #b91c1c; }
+  .key-row { display: flex; gap: 6px; align-items: center; }
+  .btn-eye { width: auto; padding: 10px 12px; margin-top: 6px; background: #e7e0d3; color: #1c1917; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -98,7 +101,7 @@
 
     <div class="card">
       <div class="card-title">🧠 Generatore Gemini AI Dal Vivo (100% Inedite)</div>
-      <p style="font-size:12px; color:#57534e;">Usa l'account Gmail attivo nella Scheda 4 per generare storie illimitate.</p>
+      <p style="font-size:12px; color:#57534e;">Account attivo: <strong id="homeActiveAccLabel">oliver.p.imhof@gmail.com</strong></p>
       
       <label class="label">Argomento opzionale (lascia vuoto per scelta autonoma AI):</label>
       <input type="text" id="aiTopicInput" placeholder="Es. Fanta, Tiramisù, Croissant, Chupa Chups...">
@@ -164,7 +167,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title">🎙️ Copione Audio (ElevenLabs - Voce Adam)</div>
+      <div class="card-title">🎙️ Copione Audio (ElevenLabs)</div>
       <textarea id="langScript" rows="5"></textarea>
       <button class="btn btn-copy" onclick="copyBox('langScript', this); markLangCopied();">📋 Copia Copione Audio</button>
       <button class="btn btn-ai" onclick="generateElevenAudio()">🔊 Genera e Scarica MP3 (<span id="audioLangLabelBtn">IT</span>)</button>
@@ -199,7 +202,7 @@
     </div>
   </div>
 
-  <!-- TAB 4: MULTI-ACCOUNT GMAIL & API -->
+  <!-- TAB 4: MULTI-ACCOUNT GMAIL, API & VOICE ID -->
   <div id="tab-audio" class="tab-pane">
     <div class="card card-highlight">
       <div class="card-title">👥 Seleziona Account Gmail Attivo</div>
@@ -220,19 +223,30 @@
         <option value="olly802025@gmail.com">olly802025@gmail.com (Oliver)</option>
         <option value="favoledellabuonanotte.info@gmail.com">favoledellabuonanotte.info@gmail.com</option>
       </select>
-      <div id="accountStatusMsg" style="font-size:12px; margin-top:8px; font-weight:700; color:#b45309;"></div>
+      <div id="accountStatusMsg" style="font-size:12px; margin-top:8px; font-weight:700; color:#15803d;"></div>
     </div>
 
     <div class="card">
       <div class="card-title">🔑 1. Chiave Gemini AI dell'Account Attivo</div>
       <label class="label">Google AI Studio API Key (AIzaSy...):</label>
-      <input type="password" id="geminiKey" placeholder="Incolla chiave AIzaSy... per questo account" onchange="saveAccountKeys()">
+      <div class="key-row">
+        <input type="password" id="geminiKey" placeholder="Incolla chiave AIzaSy..." oninput="saveAccountKeys()">
+        <button type="button" class="btn-eye" onclick="togglePass('geminiKey')">👁️</button>
+      </div>
     </div>
 
     <div class="card">
-      <div class="card-title">🔊 2. Chiave ElevenLabs dell'Account Attivo</div>
+      <div class="card-title">🔊 2. ElevenLabs API Key & Voice ID</div>
       <label class="label">ElevenLabs API Key (xi-api-key):</label>
-      <input type="password" id="xiKey" placeholder="Incolla xi-api-key per questo account" onchange="saveAccountKeys()">
+      <div class="key-row">
+        <input type="password" id="xiKey" placeholder="Incolla xi-api-key..." oninput="saveAccountKeys()">
+        <button type="button" class="btn-eye" onclick="togglePass('xiKey')">👁️</button>
+      </div>
+
+      <label class="label">ElevenLabs Voice ID (Adam = pNInz6obpgDQGcFmaJgB):</label>
+      <input type="text" id="voiceIdInput" value="pNInz6obpgDQGcFmaJgB" placeholder="Es. pNInz6obpgDQGcFmaJgB" oninput="saveAccountKeys()">
+
+      <button class="btn btn-save" onclick="saveAccountKeys(true)">💾 SALVA CHIAVI E VOICE ID IN MEMORIA</button>
       <button class="btn btn-ai" onclick="generateElevenAudio()">🎙️ Scarica MP3 Lingua Attiva (<span id="audioLangLabel">IT</span>)</button>
       <audio id="audioPlayer" controls style="width:100%; margin-top:10px; display:none;"></audio>
       <p id="audioStatus" class="status-msg"></p>
@@ -249,6 +263,8 @@
 </nav>
 
 <script>
+var DEFAULT_VOICE_ID = "pNInz6obpgDQGcFmaJgB";
+
 var AGENT_RULE = "You are generating exactly eight (8) 4-second animated video clips in vertical 9:16 format for one continuous film, strictly using a total budget of 56 credits (8 clips x 7 credits each = 56 credits total). Execute ONLY the exact 8 video prompts provided by the user, without adding, skipping, or altering any scene.\n\nA character sheet is attached showing the two recurring characters - use it as the strict visual reference in every clip (smooth round white sferic cartoon head, white apron over a dark short-sleeved collared shirt, bare skin forearms, a single pair of natural arms with white cartoon-gloved hands), and build each clip's background strictly from its corresponding scene prompt.\n\nMANDATORY REFERENCE ATTACHMENT: For every single generation call from clip 1 to clip 8, you MUST actively attach and pass the uploaded character sheet image as the visual reference input.\n\nCRITICAL FILE RENAMING RULE (1 TO 8): You MUST rename every generated video file and start every clip title strictly with its scene number from 1 to 8 at the very first character (\"1 - ...\", \"2 - ...\", \"3 - ...\", \"4 - ...\", \"5 - ...\", \"6 - ...\", \"7 - ...\", \"8 - ...\"). Deliver all eight 4-second clips in order, renamed from 1 to 8, within the 56-credit limit.";
 
 var UNIQUE_STORIES = [
@@ -256,7 +272,6 @@ var UNIQUE_STORIES = [
     id: "cornflakes",
     name: "🥣 Corn Flakes (1894)",
     year: "1894",
-    cat: "ERRORE",
     reason: "Gancio 'ERRORE IN UN SANATORIO': un impasto dimenticato che diventa la colazione più famosa del mondo.",
     thumbText: "SANATORIUM MISTAKE?!",
     prop: "cooked golden grain mash and kitchen rollers",
@@ -300,57 +315,9 @@ var UNIQUE_STORIES = [
     }
   },
   {
-    id: "bubblegum",
-    name: "🫧 Bubble Gum Rosa (1928)",
-    year: "1928",
-    cat: "ERRORE",
-    reason: "Gancio curioso: perché la gomma da masticare è proprio ROSA? Era l'unico colorante rimasto in fabbrica!",
-    thumbText: "ONLY PINK LEFT?!",
-    prop: "a bottle of bright pink food coloring and stretchy sweet gum base",
-    dish: "bright pink bubble gum pieces and a giant pink bubble",
-    scenes: [
-      "mixes stretchy sweet gum base inside a glass bowl at the wooden table while the guest in the olive-green coat watches",
-      "looks inside an empty wooden cupboard and finds only one bottle of bright pink food coloring left",
-      "pours a few drops of bright pink coloring into the sweet gum mixture with a playful grin",
-      "kneads and rolls the bright pink sweet gum into neat little squares on the wooden counter",
-      "holds up the bright pink bubble gum pieces with a proud smile in front of the curious guest",
-      "hands a piece of bright pink bubble gum across the wooden table to the guest in the olive-green coat",
-      "chews the pink gum and blows a giant bright pink bubble; his eyes transform into joyful hearts",
-      "rings a glowing bronze bell next to a giant pile of bright pink bubble gum"
-    ],
-    langs: {
-      it: {
-        script: "Sapevi che la famosissima gomma da masticare per fare i palloncini è rosa solo perché in fabbrica avevano finito tutti gli altri colori?! Nel millenovecentoventotto, il giovane contabile Walter Diemer creò per caso nel laboratorio una ricetta di gomma super elastica che non si appiccicava alla faccia! Per venderla subito cercò un colorante, ma sullo scaffale era rimasta solo una bottiglietta di colore rosa! Quel ripiego d'emergenza ebbe un tale successo da diventare il colore simbolo delle gomme in tutto il mondo! Quale storia vuoi nel prossimo video? Scrivimelo nei commenti e attiva la campanella!",
-        title: "La gomma famosa nata ROSA PER EMERGENZA che mastichi oggi?! 🤯🫧 #storia #curiosità #shorts",
-        desc: "Sapevi perché il famosissimo Bubble Gum è di colore rosa fin dal 1928?! 🫧🔥 Quando il contabile Walter Diemer inventò per caso la prima gomma super elastica per fare i palloncini, in fabbrica erano finiti tutti i coloranti tranne una bottiglietta rosa! Scopri come quel ripiego d'emergenza è diventato un'icona mondiale!\n\n💬 Quale storia o curiosità vuoi vedere nel prossimo video? Scrivimelo qui sotto nei commenti!\n🔔 Iscriviti al canale Stick History e attiva la campanellina per non perderti i prossimi video! 👇\n\n#storia #curiosità #bubblegum #gomma #invenzioni #storievere #shorts"
-      },
-      en: {
-        script: "Did you know world-famous bubble gum is pink only because the factory had run out of every other color?! In nineteen twenty-eight, young accountant Walter Diemer accidentally created a super stretchy gum recipe that didn't stick to faces! Eager to test it right away, he looked for food coloring, but the only bottle left on the shelf was pink! That emergency backup became so iconic that pink remained the official color of bubble gum worldwide! Which story do you want next? Let me know in the comments and hit the bell!",
-        title: "The famous gum born PINK BY ACCIDENT you chew today?! 🤯🫧 #history #facts #shorts",
-        desc: "Did you know world-famous Bubble Gum is pink only because pink was the single food coloring left in the factory in 1928?! 🫧🔥 Discover how accountant Walter Diemer's emergency color choice became the global symbol of bubble gum!\n\n💬 Which historical curiosity do you want to see in the next video? Let me know in the comments below!\n🔔 Subscribe to Stick History and hit the notification bell so you never miss a new video! 👇\n\n#history #curiosity #bubblegum #inventions #truestories #facts #shorts"
-      },
-      es: {
-        script: "¡¿Sabías que el famoso chicle para hacer globos es rosa solo porque en la fábrica se habían acabado todos los demás colores?! ¡En mil novecientos veintiocho, el joven contable Walter Diemer creó por accidente una goma súper elástica que no se pegaba a la cara! Para probarla buscó colorante, ¡pero en el estante solo quedaba una botella de color rosa! ¡Ese recurso de emergencia tuvo tanto éxito que se convirtió en el color oficial del chicle en todo el mundo! ¿Qué historia quieres en el próximo video? ¡Comenta y activa la campanita!",
-        title: "¡¿El famoso chicle nacido ROSA POR EMERGENCIA que masticas hoy?! 🤯🫧 #historia #shorts",
-        desc: "¡¿Sabías por qué el famoso chicle para hacer globos es rosa desde 1928?! 🫧🔥 ¡Cuando Walter Diemer creó la receta por accidente, en la fábrica solo quedaba colorante rosa! Descubre esta increíble historia real.\n\n💬 ¿Qué historia quieres ver en el próximo video? ¡Déjamelo en los comentarios!\n🔔 ¡Suscríbete a Stick History y activa la campanita para no perderte ninguna historia! 👇\n\n#historia #curiosidades #chicle #bubblegum #inventos #historiasreales #shorts"
-      },
-      pt: {
-        script: "Você sabia que o famoso chiclete de bola é rosa só porque na fábrica tinham acabado todas as outras cores?! Em mil novecentos e vinte e oito, o jovem contador Walter Diemer criou por acaso uma receita de goma super elástica que não grudava no rosto! Para testar logo, ele procurou corante, mas na prateleira só restava um frasco de cor rosa! Esse improviso fez tanto sucesso que virou a cor oficial do chiclete no mundo inteiro! Qual história você quer no próximo vídeo? Comente e ative o sininho!",
-        title: "O famoso chiclete nascido ROSA POR EMERGÊNCIA que você masca hoje?! 🤯🫧 #historia #shorts",
-        desc: "Você sabia por que o famoso chiclete de bola é rosa desde 1928?! 🫧🔥 Quando Walter Diemer inventou a goma super elástica por acidente, o rosa era o único corante que restava na fábrica!\n\n💬 Qual história ou curiosidade você quer ver no próximo vídeo? Comente aqui embaixo!\n🔔 Inscreva-se no canal Stick History e ative o sininho das notificações para não perder nenhum vídeo! 👇\n\n#historia #curiosidades #chiclete #invenções #historiasreais #shorts"
-      },
-      de: {
-        script: "Wusstest du, dass der berühmte Kaugummi nur deshalb rosa ist, weil in der Fabrik alle anderen Farben leer waren?! Neunzehnhundertachtundzwanzig erfand der Buchhalter Walter Diemer zufällig einen superelastischen Kaugummi! Als er Lebensmittelfarbe suchte, stand im Regal nur noch eine Flasche Rosa! Diese Notlösung wurde so berühmt, dass Rosa weltweit die Farbe für Bubble Gum blieb! Welche Geschichte willst du im nächsten Video? Schreib es in die Kommentare und aktiviere die Glocke!",
-        title: "Der berühmte Kaugummi aus einem FARB-NOTFALL, den du heute kaust?! 🤯🫧 #geschichte #shorts",
-        desc: "Wusstest du, warum Bubble Gum seit 1928 ausgerechnet rosa ist?! 🫧🔥 Als der Buchhalter Walter Diemer zufällig das Rezept erfand, war Rosa die einzige Lebensmittelfarbe, die in der Fabrik noch übrig war!\n\n💬 Welche Geschichte willst du im nächsten Video sehen? Schreib es mir in die Kommentare!\n🔔 Abonniere Stick History und aktiviere die Glocke, damit du kein neues Video verpasst! 👇\n\n#geschichte #kuriositäten #kaugummi #erfindungen #wahregeschichten #shorts"
-      }
-    }
-  },
-  {
     id: "tartetatin",
     name: "🥧 Tarte Tatin Rovesciata (1880)",
     year: "1880",
-    cat: "ERRORE",
     reason: "Gancio 'TORTA BRUCIATA E ROVESCIATA': un disastro in cucina salvato all'ultimo secondo.",
     thumbText: "UPSIDE-DOWN DISASTER?!",
     prop: "golden apple slices and a copper baking pan",
@@ -397,8 +364,7 @@ var UNIQUE_STORIES = [
     id: "caesar",
     name: "🥗 Caesar Salad (1924)",
     year: "1924",
-    cat: "EMERGENZA",
-    reason: "Gancio 'DISPENSA VUOTA + CHEF ITALIANO': come con la Carbonara, l'inventiva italiana salva una serata disperata.",
+    reason: "Gancio 'DISPENSA VUOTA + CHEF ITALIANO': l'inventiva italiana salva una serata disperata.",
     thumbText: "EMPTY PANTRY?!",
     prop: "crisp green romaine lettuce leaves and parmesan cheese",
     dish: "a fresh gourmet Caesar salad with golden croutons",
@@ -444,7 +410,6 @@ var UNIQUE_STORIES = [
     id: "nachos",
     name: "🧀 Nachos Improvvisati (1943)",
     year: "1943",
-    cat: "EMERGENZA",
     reason: "Gancio 'CUOCO SPARITO': il capo sala deve inventare un piatto in 2 minuti con 3 ingredienti.",
     thumbText: "NO CHEF IN KITCHEN?!",
     prop: "crisp corn tortilla triangles and melted yellow cheese",
@@ -478,7 +443,7 @@ var UNIQUE_STORIES = [
       pt: {
         script: "Você sabia que os famosos Nachos nasceram porque o cozinheiro do restaurante tinha sumido?! Em mil novecentos e quarenta e três, clientes famintos chegaram ao restaurante e o maître Ignacio Anaya, apelidado de Nacho, descobriu que o chef não estava lá! Para salvar o dia, ele cortou tortilhas em triângulos, derreteu queijo por cima com pimenta e inventou na hora o petisco que levou seu apelido: Nachos! Qual história você quer no próximo vídeo? Comente e ative o sininho!",
         title: "O famoso petisco nascido porque O CHEF SUMIU que você come hoje?! 🤯🧀 #historia #shorts",
-        desc: "Você sabia como nasceram os famosos Nachos em 1943?! 🧀🔥 Quando o cozinheiro sumiu, o maître Ignacio 'Nacho' Anaya improvisou tortilhas com queijo derretido e pimenta e criou um sucesso mundial!\n\n💬 Qual história você quer ver no próximo vídeo? Comente aqui embaixo!\n🔔 Inscreva-se no canal Stick History e ative o sininho das notificações para não perder nenhum vídeo! 👇\n\n#historia #curiosidades #nachos #comida #invenções #historiasreais #shorts"
+        desc: "Você sabia como nasceram os famosos Nachos em 1943?! 🧀🔥 Quando o cozinheiro sumiu, o maître Ignacio 'Nacho' Anaya improvisou tortilhas com queijo derretido e pimenta e criou um sucesso mundial!\n\n💬 Qual história você quer ver no próximo vídeo? Escreva nos comentários!\n🔔 Inscreva-se no canal Stick History e ative o sininho das notificações para não perder nenhum vídeo! 👇\n\n#historia #curiosidades #nachos #comida #invenções #historiasreais #shorts"
       },
       de: {
         script: "Wusstest du, dass die berühmten Nachos nur erfunden wurden, weil der Koch im Restaurant verschwunden war?! Neunzehnhundertdreiundvierzig kamen hungrige Gäste in ein Lokal, doch Oberkellner Ignacio Anaya, genannt Nacho, fand keinen Koch in der Küche! Kurzentschlossen schnitt er Tortillas in Dreiecke, schmolz Käse mit Jalapenos darüber und erfand den weltberühmten Snack mit seinem Spitznamen: Nachos! Welche Geschichte willst du im nächsten Video? Schreib es in die Kommentare und aktiviere die Glocke!",
@@ -491,7 +456,6 @@ var UNIQUE_STORIES = [
     id: "slushy",
     name: "🥤 Granita Slushy (1958)",
     year: "1958",
-    cat: "ERRORE",
     reason: "Gancio 'FRIGORIFERO ROTTO IN ESTATE': un guasto disastroso che crea una fortuna milionaria.",
     thumbText: "BROKEN FREEZER?!",
     prop: "frosty half-frozen soda bottles and a tall cup with a straw",
@@ -544,34 +508,75 @@ var lastPickedIdx = -1;
 var doneIds = [];
 var copiedLangs = {};
 
-try {
-  var savedDone = localStorage.getItem("stick_done_ids");
-  if (savedDone) doneIds = JSON.parse(savedDone);
-} catch (e) {}
+function togglePass(id) {
+  var el = document.getElementById(id);
+  el.type = (el.type === "password") ? "text" : "password";
+}
 
 function getActiveAccount() {
   return document.getElementById("gmailAccountSelect").value;
 }
 
-function switchGmailAccount() {
-  var acc = getActiveAccount();
+function loadSavedKeysForAccount(acc) {
   try {
-    var gem = localStorage.getItem("stick_gem_" + acc) || "";
-    var xi = localStorage.getItem("stick_xi_" + acc) || "";
+    var gem = localStorage.getItem("stick_gem_" + acc) || localStorage.getItem("stick_gemini_key") || "";
+    var xi = localStorage.getItem("stick_xi_" + acc) || localStorage.getItem("stick_xi_key") || "";
+    var vid = localStorage.getItem("stick_vid_" + acc) || DEFAULT_VOICE_ID;
     document.getElementById("geminiKey").value = gem;
     document.getElementById("xiKey").value = xi;
-    document.getElementById("accountStatusMsg").textContent = "✓ Account attivo: " + acc + " (Crediti attivi)";
+    document.getElementById("voiceIdInput").value = vid;
+    document.getElementById("homeActiveAccLabel").textContent = acc;
+    var hasKeys = (gem || xi) ? " (Chiavi già salvate ✓)" : " (Nessuna chiave salvata)";
+    document.getElementById("accountStatusMsg").textContent = "✓ Account attivo: " + acc + hasKeys;
   } catch (e) {}
 }
 
-function saveAccountKeys() {
+function switchGmailAccount() {
+  var acc = getActiveAccount();
+  try {
+    localStorage.setItem("stick_active_account", acc);
+  } catch (e) {}
+  loadSavedKeysForAccount(acc);
+}
+
+function saveAccountKeys(manualClick) {
   var acc = getActiveAccount();
   var gem = document.getElementById("geminiKey").value.trim();
   var xi = document.getElementById("xiKey").value.trim();
+  var vid = document.getElementById("voiceIdInput").value.trim() || DEFAULT_VOICE_ID;
   try {
+    localStorage.setItem("stick_active_account", acc);
     localStorage.setItem("stick_gem_" + acc, gem);
     localStorage.setItem("stick_xi_" + acc, xi);
-    document.getElementById("accountStatusMsg").textContent = "✓ Chiavi salvate per " + acc;
+    localStorage.setItem("stick_vid_" + acc, vid);
+    localStorage.setItem("stick_gemini_key", gem);
+    localStorage.setItem("stick_xi_key", xi);
+    var msg = manualClick
+      ? "✅ SALVATO! Chiavi e Voice ID memorizzati per " + acc
+      : "💾 Salvato automaticamente per " + acc;
+    document.getElementById("accountStatusMsg").textContent = msg;
+    document.getElementById("audioStatus").textContent = manualClick ? "✅ Dati salvati in memoria!" : "";
+  } catch (e) {
+    document.getElementById("accountStatusMsg").textContent = "⚠️ Impossibile salvare (controlla che non sia in navigazione in incognito).";
+  }
+}
+
+function initStorage() {
+  try {
+    var savedDone = localStorage.getItem("stick_done_ids");
+    if (savedDone) doneIds = JSON.parse(savedDone);
+
+    var savedAcc = localStorage.getItem("stick_active_account");
+    var sel = document.getElementById("gmailAccountSelect");
+    if (savedAcc) {
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === savedAcc) {
+          sel.selectedIndex = i;
+          break;
+        }
+      }
+    }
+    loadSavedKeysForAccount(sel.value);
   } catch (e) {}
 }
 
@@ -624,6 +629,12 @@ function evaluateVidIQ() {
   var dVal = document.getElementById("langDesc").value;
   applyVidIQBadge(document.getElementById("titleScoreBadge"), document.getElementById("titleScoreBar"), document.getElementById("titleScoreFeedback"), scoreTitleText(tVal), "VidIQ");
   applyVidIQBadge(document.getElementById("descScoreBadge"), document.getElementById("descScoreBar"), document.getElementById("descScoreFeedback"), scoreDescText(dVal), "VidIQ");
+
+  var topItTitleRes = scoreTitleText(currentStory.langs.it.title);
+  var topItDescRes = scoreDescText(currentStory.langs.it.desc);
+  applyVidIQBadge(document.getElementById("topTitleVidiqBadge"), document.getElementById("topTitleVidiqBar"), null, topItTitleRes, "VidIQ");
+  document.getElementById("statHook").textContent = topItTitleRes.score + "/100";
+  document.getElementById("statRet").textContent = topItDescRes.score + "/100";
 }
 
 function sanitizeForFlow(text) {
@@ -640,7 +651,7 @@ function buildFlowPrompts(story) {
   for (var i = 0; i < 8; i++) {
     var num = i + 1;
     var actor = (num === 7) ? "At the wooden table, the cartoon guest in the olive-green coat (smooth round white sferic head, olive-green coat and cap, a single pair of natural arms with white cartoon-gloved hands) " : "Inside the vintage kitchen, the cartoon chef (smooth round white sferic head, dark hair, tall white chef hat, white apron over a dark short-sleeved collared shirt, bare skin forearms, a single pair of natural arms with white cartoon-gloved hands) ";
-    var line = num + " - Vertical 9:16, 2D vintage comic style, warm kitchen lighting, strictly matching the attached character reference sheet. " + actor + story.scenes[i] + ". Locked camera, no text or numbers on screen.";
+    var line = " " + num + " -  Vertical 9:16, 2D vintage comic style, warm kitchen lighting, strictly matching the attached character reference sheet. " + actor + story.scenes[i] + ". Locked camera, no text or numbers on screen.";
     fullLines.push(sanitizeForFlow(line));
     var opt = document.createElement("option");
     opt.value = i;
@@ -655,7 +666,7 @@ function updateSingleScene() {
   var idx = parseInt(document.getElementById("singleSceneSelect").value || "0", 10);
   var num = idx + 1;
   var actor = (num === 7) ? "At the wooden table, the cartoon guest in the olive-green coat (smooth round white sferic head, olive-green coat and cap, a single pair of natural arms with white cartoon-gloved hands) " : "Inside the vintage kitchen, the cartoon chef (smooth round white sferic head, dark hair, tall white chef hat, white apron over a dark short-sleeved collared shirt, bare skin forearms, a single pair of natural arms with white cartoon-gloved hands) ";
-  var raw = num + " - Vertical 9:16, 2D vintage comic style, warm kitchen lighting, strictly matching the attached character reference sheet. " + actor + currentStory.scenes[idx] + ". Locked camera, no text or numbers on screen.";
+  var raw = " " + num + " -  Vertical 9:16, 2D vintage comic style, warm kitchen lighting, strictly matching the attached character reference sheet. " + actor + currentStory.scenes[idx] + ". Locked camera, no text or numbers on screen.";
   document.getElementById("singleScenePrompt").value = sanitizeForFlow(raw);
 }
 
@@ -670,7 +681,6 @@ function loadStory(story) {
   copiedLangs = {};
   updateLangButtonsUI();
   document.getElementById("activeStoryBadge").textContent = story.name;
-  document.getElementById("storyYearBadge").textContent = story.year || "NOVITÀ";
   document.getElementById("topGeneratedTitle").textContent = story.langs.it.title;
   document.getElementById("topGeneratedSummary").textContent = "💡 " + story.reason;
   var isDone = doneIds.indexOf(story.id) !== -1;
@@ -699,14 +709,16 @@ function pickNextUniqueStory() {
 function generateLiveGeminiStory() {
   var key = document.getElementById("geminiKey").value.trim();
   var status = document.getElementById("geminiStatus");
+  var topic = document.getElementById("aiTopicInput").value.trim();
   if (!key) {
     openTab("tab-audio", document.querySelectorAll(".nav-item")[3]);
     status.textContent = "⚠️ Inserisci la chiave Gemini per l'account '" + getActiveAccount() + "' nella Scheda 4.";
     return;
   }
-  status.textContent = "🧠 Gemini sta generando una nuova storia con l'account " + getActiveAccount() + "...";
+  saveAccountKeys(false);
+  status.textContent = "🧠 Gemini sta generando una nuova storia con " + getActiveAccount() + "...";
   var excluded = UNIQUE_STORIES.map(function(s){return s.name;}).join(", ");
-  var promptText = "Generate a true, viral historical food/drink invention story for YouTube Shorts. Strictly EXCLUDE: " + excluded + ". Pick a surprising, famous everyday food or drink invented by accident, emergency, or mistake. Return ONLY valid JSON with structure: {\"id\":\"unique_slug\",\"name\":\"Emoji + Name (Year)\",\"year\":\"YYYY\",\"reason\":\"Short Italian explanation\",\"thumbText\":\"2-3 WORDS ENGLISH CAPS?!\",\"prop\":\"raw ingredients\",\"dish\":\"finished dish\",\"scenes\":[\"scene 1\",\"scene 2\",\"scene 3\",\"scene 4\",\"scene 5\",\"scene 6\",\"scene 7 guest heart eyes\",\"scene 8 bell\"],\"langs\":{\"it\":{\"script\":\"Italian script\",\"title\":\"Italian title\",\"desc\":\"Italian desc\"},\"en\":{\"script\":\"English script\",\"title\":\"English title\",\"desc\":\"English desc\"},\"es\":{\"script\":\"Spanish script\",\"title\":\"Spanish title\",\"desc\":\"Spanish desc\"},\"pt\":{\"script\":\"Portuguese script\",\"title\":\"Portuguese title\",\"desc\":\"Portuguese desc\"},\"de\":{\"script\":\"German script\",\"title\":\"German title\",\"desc\":\"German desc\"}}}";
+  var promptText = "Generate a true, viral historical food/drink invention story for YouTube Shorts (32 seconds narration, ~70 words per language). Strictly EXCLUDE: " + excluded + ". " + (topic ? "Focus on: " + topic + ". " : "") + "Return ONLY valid JSON with structure: {\"id\":\"unique_slug\",\"name\":\"Emoji + Name (Year)\",\"year\":\"YYYY\",\"reason\":\"Short Italian explanation\",\"thumbText\":\"2-3 WORDS ENGLISH CAPS?!\",\"prop\":\"raw ingredients\",\"dish\":\"finished dish\",\"scenes\":[\"scene 1\",\"scene 2\",\"scene 3\",\"scene 4\",\"scene 5\",\"scene 6\",\"scene 7 guest heart eyes\",\"scene 8 bell\"],\"langs\":{\"it\":{\"script\":\"70-word Italian script starting with Sapevi che... years in words, ending with Quale storia vuoi nel prossimo video? Scrivimelo nei commenti e attiva la campanella!\",\"title\":\"Italian title\",\"desc\":\"Italian desc with 🔔 and 💬\"},\"en\":{\"script\":\"70-word English script\",\"title\":\"English title\",\"desc\":\"English desc\"},\"es\":{\"script\":\"70-word Spanish script\",\"title\":\"Spanish title\",\"desc\":\"Spanish desc\"},\"pt\":{\"script\":\"70-word Portuguese script\",\"title\":\"Portuguese title\",\"desc\":\"Portuguese desc\"},\"de\":{\"script\":\"70-word German script\",\"title\":\"German title\",\"desc\":\"German desc\"}}}";
 
   fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(key), {
     method: "POST",
@@ -725,10 +737,10 @@ function generateLiveGeminiStory() {
     var parsed = JSON.parse(raw);
     UNIQUE_STORIES.unshift(parsed);
     loadStory(parsed);
-    status.textContent = "✓ Nuova storia creata con successo!";
+    status.textContent = "✓ Nuova storia '" + parsed.name + "' creata!";
   })
   .catch(function(err) {
-    if (err.message.includes("esauriti") || err.message.includes("429")) {
+    if (err.message.indexOf("esauriti") !== -1) {
       status.textContent = "⚠️ CREDITI ESAURITI per '" + getActiveAccount() + "'! Passa al prossimo account nella Scheda 4.";
     } else {
       status.textContent = "❌ Errore API: controlla la chiave Gemini nella Scheda 4.";
@@ -794,6 +806,7 @@ function openTab(tabId, btn) {
 
 function generateElevenAudio() {
   var key = document.getElementById("xiKey").value.trim();
+  var voiceId = document.getElementById("voiceIdInput").value.trim() || DEFAULT_VOICE_ID;
   var status = document.getElementById("audioStatus");
   var text = document.getElementById("langScript").value;
   if (!key) {
@@ -801,8 +814,9 @@ function generateElevenAudio() {
     status.textContent = "⚠️ Inserisci la chiave ElevenLabs per l'account '" + getActiveAccount() + "'.";
     return;
   }
-  status.textContent = "🎙️ Generazione MP3 con l'account " + getActiveAccount() + "...";
-  fetch("https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJgB", {
+  saveAccountKeys(false);
+  status.textContent = "🎙️ Generazione MP3 (" + currentLang.toUpperCase() + ") con Voice ID " + voiceId + "...";
+  fetch("https://api.elevenlabs.io/v1/text-to-speech/" + encodeURIComponent(voiceId), {
     method: "POST",
     headers: { "xi-api-key": key, "Content-Type": "application/json" },
     body: JSON.stringify({ text: text, model_id: "eleven_multilingual_v2" })
@@ -826,10 +840,10 @@ function generateElevenAudio() {
     status.textContent = "✓ MP3 scaricato con successo!";
   })
   .catch(function(err) {
-    if (err.message.includes("esauriti")) {
+    if (err.message.indexOf("esauriti") !== -1) {
       status.textContent = "⚠️ CREDITI ELEVENLABS ESAURITI per '" + getActiveAccount() + "'! Passa al prossimo account.";
     } else {
-      status.textContent = "❌ Errore: verifica la chiave ElevenLabs dell'account.";
+      status.textContent = "❌ Errore: verifica la chiave ElevenLabs o il Voice ID.";
     }
   });
 }
@@ -846,8 +860,8 @@ function renderChips() {
   });
 }
 
+initStorage();
 loadStory(UNIQUE_STORIES[0]);
-switchGmailAccount();
 </script>
 </body>
 </html>
