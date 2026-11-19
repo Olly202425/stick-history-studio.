@@ -20,7 +20,7 @@
   .card-highlight { background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #f59e0b; }
   .card-title { font-size: 14px; font-weight: 800; color: #b45309; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
   .hero-title { font-size: 17px; font-weight: 900; color: #1c1917; line-height: 1.3; margin: 6px 0; padding: 10px; background: #fff; border-radius: 8px; border-left: 4px solid #d97706; }
-  .btn { width: 100%; border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer; text-align: center; display: block; margin-top: 8px; transition: transform 0.1s, opacity 0.15s; }
+  .btn { width: 100%; border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 800; cursor: pointer; text-align: center; display: block; margin-top: 8px; transition: transform 0.1s, opacity 0.15s; text-decoration: none; }
   .btn:active { opacity: 0.8; transform: scale(0.99); }
   .btn-ai { background: linear-gradient(135deg, #d97706, #b91c1c); color: #ffffff; font-size: 15px; padding: 14px; box-shadow: 0 3px 8px rgba(185,28,28,0.25); }
   .btn-save { background: #15803d; color: #ffffff; font-size: 15px; padding: 13px; box-shadow: 0 3px 8px rgba(21,128,61,0.25); }
@@ -223,6 +223,7 @@
         <option value="olly802025@gmail.com">olly802025@gmail.com (Oliver)</option>
         <option value="favoledellabuonanotte.info@gmail.com">favoledellabuonanotte.info@gmail.com</option>
       </select>
+      <button type="button" id="openElevenDevBtn" class="btn btn-flow" onclick="openElevenDevelopersForAccount()">🔑 APRI ELEVENLABS DEVELOPERS PER QUESTO ACCOUNT</button>
       <div id="accountStatusMsg" style="font-size:12px; margin-top:8px; font-weight:700; color:#15803d;"></div>
     </div>
 
@@ -264,6 +265,7 @@
 
 <script>
 var DEFAULT_VOICE_ID = "pNInz6obpgDQGcFmaJgB";
+var ELEVEN_DEV_URL = "https://elevenlabs.io/app/developers";
 
 var AGENT_RULE = "You are generating exactly eight (8) 4-second animated video clips in vertical 9:16 format for one continuous film, strictly using a total budget of 56 credits (8 clips x 7 credits each = 56 credits total). Execute ONLY the exact 8 video prompts provided by the user, without adding, skipping, or altering any scene.\n\nA character sheet is attached showing the two recurring characters - use it as the strict visual reference in every clip (smooth round white sferic cartoon head, white apron over a dark short-sleeved collared shirt, bare skin forearms, a single pair of natural arms with white cartoon-gloved hands), and build each clip's background strictly from its corresponding scene prompt.\n\nMANDATORY REFERENCE ATTACHMENT: For every single generation call from clip 1 to clip 8, you MUST actively attach and pass the uploaded character sheet image as the visual reference input.\n\nCRITICAL FILE RENAMING RULE (1 TO 8): You MUST rename every generated video file and start every clip title strictly with its scene number from 1 to 8 at the very first character (\"1 - ...\", \"2 - ...\", \"3 - ...\", \"4 - ...\", \"5 - ...\", \"6 - ...\", \"7 - ...\", \"8 - ...\"). Deliver all eight 4-second clips in order, renamed from 1 to 8, within the 56-credit limit.";
 
@@ -346,7 +348,7 @@ var UNIQUE_STORIES = [
       es: {
         script: "¡¿Sabías que la famosísima tarta de manzana Tarte Tatin nació por un despiste total en la cocina?! ¡Hacia mil ochocientos ochenta, la cocinera Stéphanie Tatin se dio cuenta demasiado tarde de que había cocinado las manzanas con mantequilla y azúcar olvidando por completo la base de masa! Para salvar el plato, puso la masa encima de las manzanas y le dio la vuelta al molde, ¡creando por error el postre más famoso de Francia! ¿Qué historia quieres en el próximo video? ¡Comenta y activa la campanita!",
         title: "¡¿La famosa tarta nacida AL REVÉS POR ERROR que comes hoy?! 🤯🥧 #historia #shorts",
-        desc: "¡¿Sabías que la famosa Tarte Tatin nació en 1880 por un descuido en la cocina?! 🥧🔥 ¡Para salvar las manzanas que se cocinaban sin base, Stéphanie Tatin puso la masa encima y volteó el molde al revés!\n\n💬 ¿Qué historia quieres ver en el próximo video? ¡Déjamelo en los comentarios!\n🔔 ¡Suscríbete a Stick History y activa la campanita para no perderte ningún video! 👇\n\n#historia #curiosidades #tartetatin #postres #comida #inventos #shorts"
+        desc: "¡¿Sabías que la famosa Tarte Tatin nació en 1880 por un descuido en la cocina?! 🥧🔥 ¡Para salvar las manzanas que se cocinaban sin base, Stéphanie Tatin puso la masa encima y volteó el molde al revés!\n\n💬 ¿Qué historia quieres ver en el próximo video? ¡Déjamelo en los comentarios!\n🔔 ¡Suscríbete a Stick History y activa la campanita de notificaciones para no perderte ningún video! 👇\n\n#historia #curiosidades #tartetatin #postres #comida #inventos #shorts"
       },
       pt: {
         script: "Você sabia que a famosa torta de maçã francesa Tarte Tatin nasceu por causa de uma distração na cozinha?! Por volta de mil oitocentos e oitenta, a cozinheira Stéphanie Tatin percebeu tarde demais que tinha cozinhado as maçãs na manteiga e açúcar esquecendo totalmente a massa por baixo! Para salvar a receita, ela colocou a massa por cima das maçãs e virou a forma de cabeça para baixo no prato, criando por engano a sobremesa mais famosa da França! Qual história você quer no próximo vídeo? Comente e ative o sininho!",
@@ -484,7 +486,7 @@ var UNIQUE_STORIES = [
       es: {
         script: "¡¿Sabías que el famosísimo granizado Slushy nació porque se rompió la nevera de un restaurante en pleno verano?! ¡En mil novecientos cincuenta y ocho, en Kansas, la máquina de refrescos de Omar Knedlik se averió en un día de calor extremo! Desesperado, metió las botellas en el congelador: al abrirlas frente a los clientes, el líquido se transformó al instante en nieve dulce con gas, ¡creando la bebida helada más famosa del mundo! ¿Qué historia quieres en el próximo video? ¡Comenta y activa la campanita!",
         title: "¡¿La bebida famosa nacida por una NEVERA ROTA que tomas hoy?! 🤯🥤 #historia #shorts",
-        desc: "¡¿Sabías que el famoso granizado Slushy nació en 1958 gracias a una avería en pleno verano?! 🥤❄️ ¡Al meter los refrescos en el congelador, el líquido se convirtió al instante en nieve dulce con gas al destapar las botellas!\n\n💬 ¿Qué historia quieres ver en el próximo video? ¡Déjamelo en los comentarios!\n🔔 ¡Suscríbete a Stick History y activa la campanita para no perderte ninguna historia! 👇\n\n#historia #curiosidades #granizado #slushy #inventos #historiasreales #shorts"
+        desc: "¡¿Sabías que el famoso granizado Slushy nació en 1958 gracias a una avería en pleno verano?! 🥤❄️ ¡Al meter los refrescos en el congelador, el líquido se convirtió al instante en nieve dulce con gas al destapar las botellas!\n\n💬 ¿Qué historia quieres ver en el próximo video? ¡Déjamelo en los comentarios!\n🔔 ¡Suscríbete a Stick History y activa la campanita de notificaciones para no perderte ninguna historia! 👇\n\n#historia #curiosidades #granizado #slushy #inventos #historiasreales #shorts"
       },
       pt: {
         script: "Você sabia que a famosa raspadinha gaseificada Slushy nasceu porque a geladeira de uma lanchonete quebrou no verão?! Em mil novecentos e cinquenta e oito, a máquina de refrigerantes de Omar Knedlik pifou num dia super quente! Desesperado, ele guardou as garrafas no congelador: assim que abriu as tampas para os clientes, o líquido virou uma neve doce e borbulhante na hora, criando a bebida congelada mais famosa do mundo! Qual história você quer no próximo vídeo? Comente e ative o sininho!",
@@ -517,6 +519,22 @@ function getActiveAccount() {
   return document.getElementById("gmailAccountSelect").value;
 }
 
+function updateAccountButtonLabel(acc) {
+  var btn = document.getElementById("openElevenDevBtn");
+  if (btn) {
+    btn.textContent = "🔑 APRI ELEVENLABS DEVELOPERS (" + acc + ")";
+  }
+}
+
+function openElevenDevelopersForAccount() {
+  var acc = getActiveAccount();
+  try {
+    localStorage.setItem("stick_active_account", acc);
+  } catch (e) {}
+  document.getElementById("accountStatusMsg").textContent = "🌐 Apro ElevenLabs Developers per: " + acc + " (verifica l'account su ElevenLabs)";
+  window.open(ELEVEN_DEV_URL, "_blank", "noopener,noreferrer");
+}
+
 function loadSavedKeysForAccount(acc) {
   try {
     var gem = localStorage.getItem("stick_gem_" + acc) || localStorage.getItem("stick_gemini_key") || "";
@@ -526,6 +544,7 @@ function loadSavedKeysForAccount(acc) {
     document.getElementById("xiKey").value = xi;
     document.getElementById("voiceIdInput").value = vid;
     document.getElementById("homeActiveAccLabel").textContent = acc;
+    updateAccountButtonLabel(acc);
     var hasKeys = (gem || xi) ? " (Chiavi già salvate ✓)" : " (Nessuna chiave salvata)";
     document.getElementById("accountStatusMsg").textContent = "✓ Account attivo: " + acc + hasKeys;
   } catch (e) {}
