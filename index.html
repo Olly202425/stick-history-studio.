@@ -751,6 +751,7 @@ function generateLiveGeminiStory() {
 
   function tryModel(idx) {
     var modelName = modelsToTry[idx];
+    status.textContent = "🧠 Generazione con " + modelName + " (" + getActiveAccount() + ")...";
     return fetchWithTimeout(
       "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent",
       {
@@ -769,7 +770,7 @@ function generateLiveGeminiStory() {
     .then(function(res) {
       if (!res.ok) {
         return res.text().then(function(errBody) {
-          if ((res.status === 404 || res.status === 400) && idx + 1 < modelsToTry.length) {
+          if ((res.status === 404 || res.status === 400 || res.status === 429 || res.status === 503) && idx + 1 < modelsToTry.length) {
             return tryModel(idx + 1);
           }
           throw new Error("HTTP " + res.status + " (" + modelName + "): " + errBody.slice(0, 140));
