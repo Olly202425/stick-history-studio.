@@ -695,18 +695,59 @@ function copyAndOpenFlow() {
   window.open("https://labs.google/fx/it/tools/flow", "_blank");
 }
 
+function polishViralTitle(rawTitle, storyName, lang) {
+  var defaults = {
+    it: { caps: "ERRORE IN CUCINA", tail: "che mangi oggi?! 🤯🔥 #storia #curiosità #shorts" },
+    en: { caps: "KITCHEN MISTAKE", tail: "you eat today?! 🤯🔥 #history #facts #shorts" },
+    es: { caps: "ERROR EN COCINA", tail: "que comes hoy?! 🤯🔥 #historia #curiosidades #shorts" },
+    pt: { caps: "ERRO NA COZINHA", tail: "que você come hoje?! 🤯🔥 #historia #curiosidades #shorts" },
+    de: { caps: "KÜCHEN-FEHLER", tail: "das du heute isst?! 🤯🔥 #geschichte #kuriositäten #shorts" }
+  };
+  var cfg = defaults[lang] || defaults.it;
+  var t = (rawTitle || "").trim();
+  var cleanBase = t.replace(/#[a-zA-Z0-9_àèéìòùäöüßáéíóúãõç]+/g, "").replace(/[🤯🔥💡🥣🥧🥗🧀🥤?!]+/g, "").trim();
+  if (!/[A-ZÀÈÉÌÒÙÁÉÍÓÚÄÖÜ]{4,}/.test(cleanBase)) {
+    cleanBase = (storyName || "La storia") + " nata da un " + cfg.caps;
+  }
+  var hasQuestionBang = /\?!|!\?/.test(t);
+  var hasEmoji = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u27BF]/.test(t);
+  var tagMatches = t.match(/#[a-zA-Z0-9_àèéìòùäöüßáéíóúãõç]+/g) || [];
+  var tagsPart = tagMatches.length >= 2 ? tagMatches.slice(0, 3).join(" ") : cfg.tail.split(" ").slice(-3).join(" ");
+  var body = cleanBase;
+  if (!hasQuestionBang) body += " che mangi oggi?!";
+  if (!hasEmoji) body += " 🤯🔥";
+  var combined = (body + " " + tagsPart).replace(/\s+/g, " ").trim();
+  if (combined.length > 105) {
+    var shortCore = cleanBase.slice(0, 52).trim() + "?! 🤯🔥";
+    combined = (shortCore + " " + tagsPart).replace(/\s+/g, " ").trim();
+  }
+  return combined;
+}
+
+function polishStoryTitles(story) {
+  if (!story || !story.langs) return story;
+  var codes = ["it", "en", "es", "pt", "de"];
+  for (var i = 0; i < codes.length; i++) {
+    var c = codes[i];
+    if (story.langs[c]) {
+      story.langs[c].title = polishViralTitle(story.langs[c].title, story.name, c);
+    }
+  }
+  return story;
+}
+
 function loadStory(story) {
-  currentStory = story;
+  currentStory = polishStoryTitles(story);
   copiedLangs = {};
   updateLangButtonsUI();
-  document.getElementById("activeStoryBadge").textContent = story.name;
-  document.getElementById("topGeneratedTitle").textContent = story.langs.it.title;
-  document.getElementById("topGeneratedSummary").textContent = "💡 " + story.reason;
-  var isDone = doneIds.indexOf(story.id) !== -1;
+  document.getElementById("activeStoryBadge").textContent = currentStory.name;
+  document.getElementById("topGeneratedTitle").textContent = currentStory.langs.it.title;
+  document.getElementById("topGeneratedSummary").textContent = "💡 " + currentStory.reason;
+  var isDone = doneIds.indexOf(currentStory.id) !== -1;
   var doneBtn = document.getElementById("markDoneBtn");
   if (isDone) { doneBtn.textContent = "✅ STORIA GIÀ PUBBLICATA (Tocca per sbloccare)"; doneBtn.classList.add("marked"); }
   else { doneBtn.textContent = "☑️ Segna questa storia come GIÀ PUBBLICATA"; doneBtn.classList.remove("marked"); }
-  buildFlowPrompts(story);
+  buildFlowPrompts(currentStory);
   renderLangFields();
   renderChips();
 }
@@ -738,7 +779,7 @@ function generateLiveGeminiStory() {
   status.textContent = "🧠 Gemini sta generando una nuova storia con " + getActiveAccount() + "...";
 
   var excluded = UNIQUE_STORIES.map(function(s){return s.name;}).join(", ");
-  var promptText = "Generate a true, viral historical food/drink invention story for YouTube Shorts (~50 words per language). Strictly EXCLUDE: " + excluded + ". " + (topic ? "Focus on: " + topic + ". " : "") + "Return ONLY valid JSON: {\"id\":\"unique_slug\",\"name\":\"Emoji + Name (Year)\",\"year\":\"YYYY\",\"reason\":\"Short Italian hook\",\"thumbText\":\"2-3 WORDS CAPS?!\",\"prop\":\"ingredients\",\"dish\":\"finished dish\",\"scenes\":[\"s1\",\"s2\",\"s3\",\"s4\",\"s5\",\"s6\",\"s7 guest heart eyes\",\"s8 bell\"],\"langs\":{\"it\":{\"script\":\"Italian script starting with Sapevi che... years in words, ending with Quale storia vuoi nel prossimo video? Scrivimelo nei commenti e attiva la campanella!\",\"title\":\"Italian title\",\"desc\":\"Italian desc with 🔔 and 💬\"},\"en\":{\"script\":\"English script\",\"title\":\"English title\",\"desc\":\"English desc\"},\"es\":{\"script\":\"Spanish script\",\"title\":\"Spanish title\",\"desc\":\"Spanish desc\"},\"pt\":{\"script\":\"Portuguese script\",\"title\":\"Portuguese title\",\"desc\":\"Portuguese desc\"},\"de\":{\"script\":\"German script\",\"title\":\"German title\",\"desc\":\"German desc\"}}}";
+  var promptText = "Generate a true, viral historical food/drink invention story for YouTube Shorts (~55 words per language). Strictly EXCLUDE: " + excluded + ". " + (topic ? "Focus on: " + topic + ". " : "") + "Write punchy Stick History titles with a strong ALL-CAPS hook (never VENDETTA), ending with ?! and emojis plus 3 hashtags (e.g. #storia #curiosità #shorts, length 55-95 chars, VidIQ 95+). Return ONLY valid JSON: {\"id\":\"unique_slug\",\"name\":\"Emoji + Name (Year)\",\"year\":\"YYYY\",\"reason\":\"Short Italian hook with ALL-CAPS phrase\",\"thumbText\":\"2-3 WORDS CAPS?!\",\"prop\":\"ingredients\",\"dish\":\"finished dish\",\"scenes\":[\"s1\",\"s2\",\"s3\",\"s4\",\"s5\",\"s6\",\"s7 guest heart eyes\",\"s8 bell\"],\"langs\":{\"it\":{\"script\":\"Italian script starting with Sapevi che... years in words, ending with Quale storia vuoi nel prossimo video? Scrivimelo nei commenti e attiva la campanella!\",\"title\":\"Punchy Italian title with ALL-CAPS hook?! 🤯🔥 #storia #curiosità #shorts\",\"desc\":\"Italian desc with 🔔 and 💬 and 5+ hashtags\"},\"en\":{\"script\":\"English script\",\"title\":\"Punchy English title with ALL-CAPS hook?! 🤯🔥 #history #facts #shorts\",\"desc\":\"English desc\"},\"es\":{\"script\":\"Spanish script\",\"title\":\"Punchy Spanish title with ALL-CAPS hook?! 🤯🔥 #historia #curiosidades #shorts\",\"desc\":\"Spanish desc\"},\"pt\":{\"script\":\"Portuguese script\",\"title\":\"Punchy Portuguese title with ALL-CAPS hook?! 🤯🔥 #historia #curiosidades #shorts\",\"desc\":\"Portuguese desc\"},\"de\":{\"script\":\"German script\",\"title\":\"Punchy German title with ALL-CAPS hook?! 🤯🔥 #geschichte #kuriositäten #shorts\",\"desc\":\"German desc\"}}}";
 
   var modelsToTry = ["gemini-3.8-flash", "gemini-3.5-flash-lite"];
 
@@ -783,7 +824,7 @@ function generateLiveGeminiStory() {
   tryModel(0)
     .then(function(data) {
       var raw = data.candidates[0].content.parts[0].text;
-      var parsed = JSON.parse(raw);
+      var parsed = polishStoryTitles(JSON.parse(raw));
       UNIQUE_STORIES.unshift(parsed);
       loadStory(parsed);
       status.textContent = "✓ Nuova storia '" + parsed.name + "' creata!";
