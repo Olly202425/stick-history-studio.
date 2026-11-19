@@ -47,7 +47,7 @@
   .chip { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; }
   .chip.done { opacity: 0.45; text-decoration: line-through; background: #e7e5e4; border-color: #a8a29e; color: #57534e; }
   .label { font-size: 12px; font-weight: 700; color: #57534e; margin-top: 8px; display: block; }
-  .status-msg { font-size: 12px; margin-top: 8px; font-weight: 700; color: #15803d; }
+  .status-msg { font-size: 12px; margin-top: 8px; font-weight: 700; color: #15803d; word-break: break-word; }
   .vidiq-pill { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 900; color: #ffffff; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
   .vidiq-green { background: #15803d; box-shadow: 0 2px 5px rgba(21,128,61,0.3); }
   .vidiq-red { background: #dc2626; box-shadow: 0 2px 5px rgba(220,38,38,0.3); }
@@ -223,15 +223,15 @@
         <option value="olly802025@gmail.com">olly802025@gmail.com (Oliver)</option>
         <option value="favoledellabuonanotte.info@gmail.com">favoledellabuonanotte.info@gmail.com</option>
       </select>
-      <button type="button" id="openElevenDevBtn" class="btn btn-flow" onclick="openElevenDevelopersForAccount()">🔑 APRI ELEVENLABS DEVELOPERS PER QUESTO ACCOUNT</button>
+      <button type="button" id="openElevenDevBtn" class="btn btn-flow" onclick="openElevenDevelopersForAccount()">🔑 APRI ELEVENLABS DEVELOPERS</button>
       <div id="accountStatusMsg" style="font-size:12px; margin-top:8px; font-weight:700; color:#15803d;"></div>
     </div>
 
     <div class="card">
       <div class="card-title">🔑 1. Chiave Gemini AI dell'Account Attivo</div>
-      <label class="label">Google AI Studio API Key (AIzaSy...):</label>
+      <label class="label">Google AI Studio API Key (AIzaSy... o AQ....):</label>
       <div class="key-row">
-        <input type="password" id="geminiKey" placeholder="Incolla chiave AIzaSy..." oninput="saveAccountKeys()">
+        <input type="password" id="geminiKey" placeholder="Incolla chiave API Gemini..." oninput="saveAccountKeys()">
         <button type="button" class="btn-eye" onclick="togglePass('geminiKey')">👁️</button>
       </div>
     </div>
@@ -450,7 +450,7 @@ var UNIQUE_STORIES = [
       de: {
         script: "Wusstest du, dass die berühmten Nachos nur erfunden wurden, weil der Koch im Restaurant verschwunden war?! Neunzehnhundertdreiundvierzig kamen hungrige Gäste in ein Lokal, doch Oberkellner Ignacio Anaya, genannt Nacho, fand keinen Koch in der Küche! Kurzentschlossen schnitt er Tortillas in Dreiecke, schmolz Käse mit Jalapenos darüber und erfand den weltberühmten Snack mit seinem Spitznamen: Nachos! Welche Geschichte willst du im nächsten Video? Schreib es in die Kommentare und aktiviere die Glocke!",
         title: "Der berühmte Snack, der entstand, weil DER KOCH FEHLTE?! 🤯🧀 #geschichte #shorts",
-        desc: "Wusstest du, wie die weltberühmten Nachos 1943 entstanden sind?! 🧀🔥 Weil der Koch unauffindbar war, schnitt Oberkellner Ignacio 'Nacho' Anaya kurzentschlossen Tortillas in Dreiecke und überbackte sie mit Käse und Jalapeños!\n\n💬 Welche Geschichte willst du im nächsten Video sehen? Schreib es mir in die Kommentare!\n🔔 Abonniere Stick History und aktiviere die Glocke, um kein neues Video zu verpassen! 👇\n\n#geschichte #kuriositäten #nachos #essen #erfindungen #shorts"
+        desc: "Wusstest du, wie die weltberühmten Nachos 1943 entstanden sind?! 🧀🔥 Weil der Koch unauffindbar war, schnitt Oberkellner Ignacio 'Nacho' Anaya kurzentschlossen Tortillas in Dreiecke und überbackte sie mit Käse und Jalapeños!\n\n💬 Welche Geschichte willst du im nächsten Video sehen? Schreib es mir in die Kommentare!\n🔔 Abonniere Stick History und aktiviere die Glocke, um keine wahre Geschichte mehr zu verpassen! 👇\n\n#geschichte #kuriositäten #nachos #essen #erfindungen #shorts"
       }
     }
   },
@@ -496,7 +496,7 @@ var UNIQUE_STORIES = [
       de: {
         script: "Wusstest du, dass der weltberühmte Slushy-Drink nur entstand, weil im Hochsommer der Kühlschrank kaputtging?! Neunzehnhundertachtundfünfzig fiel in Kansas die Getränkemaschine von Omar Knedlik an einem heißen Tag aus! Er legte die Limoflaschen in die Tiefkühltruhe: Als er sie vor den Gästen öffnete, verwandelte sich die Flüssigkeit sofort in prickelnden süßen Schnee! Welche Geschichte willst du im nächsten Video? Schreib es in die Kommentare und aktiviere die Glocke!",
         title: "Das berühmte Getränk aus einem KAPUTTEN KÜHLSCHRANK, das du trinkst?! 🤯🥤 #geschichte #shorts",
-        desc: "Wusstest du, dass das berühmte Slush-Eis 1958 durch eine Kühlpanne im Hochsommer erfunden wurde?! 🥤❄️ Als Omar Knedlik die Limoflaschen aus der Tiefkühltruhe öffnete, verwandelten sie sich sofort in prickelnden Schnee!\n\n💬 Welche Geschichte willst du im nächsten Video sehen? Schreib es mir in die Kommentare!\n🔔 Abonniere Stick History und aktiviere die Glocke, um kein neues Video zu verpassen! 👇\n\n#geschichte #kuriositäten #slushy #erfindungen #wahregeschichten #shorts"
+        desc: "Wusstest du, dass das berühmte Slush-Eis 1958 durch eine Kühlpanne im Hochsommer erfunden wurde?! 🥤❄️ Als Omar Knedlik die Limoflaschen aus der Tiefkühltruhe öffnete, verwandelten sie sich sofort in prickelnden Schnee!\n\n💬 Welche Geschichte willst du im nächsten Video sehen? Schreib es mir in die Kommentare!\n🔔 Abonniere Stick History und aktiviere die Glocke, um keine wahre Geschichte mehr zu verpassen! 👇\n\n#geschichte #kuriositäten #slushy #erfindungen #wahregeschichten #shorts"
       }
     }
   }
@@ -739,15 +739,22 @@ function generateLiveGeminiStory() {
   var excluded = UNIQUE_STORIES.map(function(s){return s.name;}).join(", ");
   var promptText = "Generate a true, viral historical food/drink invention story for YouTube Shorts (32 seconds narration, ~70 words per language). Strictly EXCLUDE: " + excluded + ". " + (topic ? "Focus on: " + topic + ". " : "") + "Return ONLY valid JSON with structure: {\"id\":\"unique_slug\",\"name\":\"Emoji + Name (Year)\",\"year\":\"YYYY\",\"reason\":\"Short Italian explanation\",\"thumbText\":\"2-3 WORDS ENGLISH CAPS?!\",\"prop\":\"raw ingredients\",\"dish\":\"finished dish\",\"scenes\":[\"scene 1\",\"scene 2\",\"scene 3\",\"scene 4\",\"scene 5\",\"scene 6\",\"scene 7 guest heart eyes\",\"scene 8 bell\"],\"langs\":{\"it\":{\"script\":\"70-word Italian script starting with Sapevi che... years in words, ending with Quale storia vuoi nel prossimo video? Scrivimelo nei commenti e attiva la campanella!\",\"title\":\"Italian title\",\"desc\":\"Italian desc with 🔔 and 💬\"},\"en\":{\"script\":\"70-word English script\",\"title\":\"English title\",\"desc\":\"English desc\"},\"es\":{\"script\":\"70-word Spanish script\",\"title\":\"Spanish title\",\"desc\":\"Spanish desc\"},\"pt\":{\"script\":\"70-word Portuguese script\",\"title\":\"Portuguese title\",\"desc\":\"Portuguese desc\"},\"de\":{\"script\":\"70-word German script\",\"title\":\"German title\",\"desc\":\"German desc\"}}}";
 
-  fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(key), {
+  fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }], generationConfig: { responseMimeType: "application/json" } })
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": key
+    },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: promptText }] }],
+      generationConfig: { responseMimeType: "application/json" }
+    })
   })
   .then(function(res) {
     if (!res.ok) {
-      if (res.status === 429) throw new Error("Crediti esauriti per questo account!");
-      throw new Error("API Error");
+      return res.text().then(function(errBody) {
+        throw new Error("HTTP " + res.status + ": " + errBody.slice(0, 140));
+      });
     }
     return res.json();
   })
@@ -759,11 +766,7 @@ function generateLiveGeminiStory() {
     status.textContent = "✓ Nuova storia '" + parsed.name + "' creata!";
   })
   .catch(function(err) {
-    if (err.message.indexOf("esauriti") !== -1) {
-      status.textContent = "⚠️ CREDITI ESAURITI per '" + getActiveAccount() + "'! Passa al prossimo account nella Scheda 4.";
-    } else {
-      status.textContent = "❌ Errore API: controlla la chiave Gemini nella Scheda 4.";
-    }
+    status.textContent = "❌ " + (err && err.message ? err.message : "Errore API: controlla la chiave Gemini nella Scheda 4.");
   });
 }
 
